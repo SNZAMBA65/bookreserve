@@ -10,13 +10,16 @@
          bootstrap="tests/bootstrap.php"
          cacheDirectory=".phpunit.cache"
 >
-    <php>
-        <ini name="display_errors" value="1" />
-        <ini name="error_reporting" value="-1" />
-        <server name="APP_ENV" value="test" force="true" />
-        <server name="SHELL_VERBOSITY" value="-1" />
-    </php>
-
+   <php>
+    <ini name="display_errors" value="1" />
+    <ini name="error_reporting" value="-1" />
+    <server name="APP_ENV" value="test" force="true"/>
+    <server name="SHELL_VERBOSITY" value="-1" />
+    
+    
+    <env name="SYMFONY_DOTENV_PATH" value=".env.test"/>
+    <env name="DATABASE_URL" value="mysql://root:@127.0.0.1:3306/bookreserve_db?serverVersion=8."/>
+</php>
     <testsuites>
         <testsuite name="Project Test Suite">
             <directory>tests</directory>
