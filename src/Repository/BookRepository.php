@@ -1,5 +1,5 @@
 <?php
-
+// src/Repository/BookRepository.php
 
 namespace App\Repository;
 
@@ -25,6 +25,17 @@ class BookRepository extends ServiceEntityRepository
         return $this->createQueryBuilder('b')
             ->andWhere('b.available = :available')
             ->setParameter('available', true)
+            ->orderBy('b.title', 'ASC')
+            ->getQuery()
+            ->getResult();
+    }
+
+    /**
+     * @return Book[] Returns an array of all books
+     */
+    public function findAll(): array
+    {
+        return $this->createQueryBuilder('b')
             ->orderBy('b.title', 'ASC')
             ->getQuery()
             ->getResult();

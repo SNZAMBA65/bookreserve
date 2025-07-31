@@ -1,6 +1,5 @@
 <?php
 
-
 namespace App\Entity;
 
 use App\Repository\ReservationRepository;
@@ -31,7 +30,7 @@ class Reservation
     public function __construct()
     {
         $this->reservedAt = new \DateTime();
-        $this->expiresAt = new \DateTime('+7 days'); // Réservation valide 7 jours
+        $this->expiresAt = new \DateTime('+7 days');
     }
 
     public function getId(): ?int
