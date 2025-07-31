@@ -16,14 +16,13 @@ jobs:
         env:
           MYSQL_ROOT_PASSWORD: root
           MYSQL_DATABASE: bookreserve_db
-          MYSQL_ALLOW_EMPTY_PASSWORD: "yes"
         ports:
           - 3306:3306
         options: >-
-          --health-cmd="mysqladmin ping --silent"
+          --health-cmd="mysqladmin ping -h localhost -u root -proot"
           --health-interval=10s
           --health-timeout=5s
-          --health-retries=3
+          --health-retries=5
 
     steps:
     - uses: actions/checkout@v4
@@ -47,15 +46,21 @@ jobs:
     - name: Install dependencies
       run: composer install --prefer-dist --no-progress
 
-    - name: Create .env.test.local
+    - name: Setup test environment
       run: |
-        echo 'DATABASE_URL="mysql://root:root@127.0.0.1:3306/bookreserve_db?serverVersion=8.0"' > .env.test.local
+        echo 'APP_ENV=test' > .env.test.local
+        echo 'DATABASE_URL="mysql://root:root@127.0.0.1:3306/bookreserve_db?serverVersion=8.0"' >> .env.test.local
+        echo 'MESSENGER_TRANSPORT_DSN=doctrine://default' >> .env.test.local
 
     - name: Wait for MySQL
       run: |
-        until mysqladmin ping -h"127.0.0.1" -P"3306" -u"root" -p"root" --silent; do
-          echo 'Waiting for MySQL...'
-          sleep 1
+        for i in {1..30}; do
+          if mysqladmin ping -h 127.0.0.1 -P 3306 -u root -proot --silent; then
+            echo "MySQL is ready!"
+            break
+          fi
+          echo "Waiting for MySQL... ($i/30)"
+          sleep 2
         done
 
     - name: Create database schema
@@ -65,4 +70,4 @@ jobs:
 
     - name: Run tests
       run: |
-        php bin/phpunit --coverage-text
+        php bin/phpunit
