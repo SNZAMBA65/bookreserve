@@ -12,6 +12,10 @@ jobs:
   tests:
     runs-on: ubuntu-latest
 
+    env:
+      DATABASE_URL: "mysql://root:root@127.0.0.1:3306/bookreserve_db?serverVersion=8.0"
+      MESSENGER_TRANSPORT_DSN: doctrine://default
+
     services:
       mysql:
         image: mysql:8.0
@@ -48,10 +52,6 @@ jobs:
     - name: Install dependencies
       run: composer install --prefer-dist --no-progress
 
-    - name: Create .env.test.local
-      run: |
-        echo 'DATABASE_URL="mysql://root:root@127.0.0.1:3306/bookreserve_db?serverVersion=8.0"' > .env.test.local
-
     - name: Wait for MySQL
       run: |
         until mysqladmin ping -h"127.0.0.1" -P"3306" -u"root" -p"root" --silent; do
@@ -63,14 +63,20 @@ jobs:
       run: |
         php bin/console doctrine:database:create --env=test --if-not-exists
         php bin/console doctrine:migrations:migrate --env=test --no-interaction
+      env:
+        DATABASE_URL: "mysql://root:root@127.0.0.1:3306/bookreserve_db?serverVersion=8.0"
 
     - name: Load fixtures (optional)
       run: |
         php bin/console doctrine:fixtures:load --env=test --no-interaction || true
+      env:
+        DATABASE_URL: "mysql://root:root@127.0.0.1:3306/bookreserve_db?serverVersion=8.0"
 
     - name: Run tests
       run: |
         php bin/phpunit --coverage-text
+      env:
+        DATABASE_URL: "mysql://root:root@127.0.0.1:3306/bookreserve_db?serverVersion=8.0"
 
     - name: Check code style (optional)
       run: |
