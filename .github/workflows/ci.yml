@@ -1,3 +1,5 @@
+# .github/workflows/ci.yml
+
 name: CI
 
 on:
@@ -48,11 +50,11 @@ jobs:
 
     - name: Create .env.test.local
       run: |
-        echo 'DATABASE_URL="mysql://root:@127.0.0.1:3306/bookreserve_db?serverVersion=8.0"' > .env.test.local
+        echo 'DATABASE_URL="mysql://root:root@127.0.0.1:3306/bookreserve_db?serverVersion=8.0"' > .env.test.local
 
     - name: Wait for MySQL
       run: |
-        until mysqladmin ping -h"127.0.0.1" -P"3306" -u"root" --silent; do
+        until mysqladmin ping -h"127.0.0.1" -P"3306" -u"root" -p"root" --silent; do
           echo 'Waiting for MySQL...'
           sleep 1
         done
